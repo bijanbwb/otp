@@ -1,1 +1,1 @@
-alias Mastery.Core.{Question, Template}
+alias Mastery.Core.{Question, Response, Template}
