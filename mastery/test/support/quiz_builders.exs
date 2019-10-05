@@ -3,10 +3,10 @@ defmodule QuizBuilders do
 
   # Macros
 
-  defmacro __using__(options) do
+  defmacro __using__(_options) do
     quote do
       alias Mastery.Core.{Response, Template, Quiz}
-      import QuizBuilders, only: functions
+      import QuizBuilders, only: :functions
     end
   end
 
