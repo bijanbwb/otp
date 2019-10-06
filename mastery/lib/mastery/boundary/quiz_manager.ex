@@ -4,6 +4,17 @@ defmodule Mastery.Boundary.QuizManager do
 
   `handle_call/3` will create a new quiz, add it to the `quizzes` map, and
   return the new state.
+
+  ## Example Usage
+
+  iex> GenServer.start_link(QuizManager, %{}, name: QuizManager)
+  {:ok, #PID<0.123.0>}
+  iex> QuizManager.build_quiz(title: :quiz)
+  :ok
+  iex> QuizManager.add_template(:quiz, Math.template_fields)
+  :ok
+  iex> QuizManager.lookup_quiz_by_title(:quiz)
+  %Mastery.Core.Quiz{...}
   """
   alias Mastery.Core.Quiz
 
