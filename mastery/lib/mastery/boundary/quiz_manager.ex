@@ -2,8 +2,8 @@ defmodule Mastery.Boundary.QuizManager do
   @moduledoc """
   GenServer initializes with an empty map of `quizzes`.
 
-  `handle_call/3` will create a new quiz, add it to the `quizzes` map, and
-  return the new state.
+  `handle_call/3` with a `:build_quiz` message will create a new quiz, add it
+  to the `quizzes` map, and return the new state.
 
   ## Example Usage
 
