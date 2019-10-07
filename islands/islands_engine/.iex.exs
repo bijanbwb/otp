@@ -1,1 +1,1 @@
-alias IslandsEngine.Coordinate
+alias IslandsEngine.{Coordinate, Guesses}
