@@ -2,7 +2,9 @@ defmodule MasteryTest do
   use ExUnit.Case
   doctest Mastery
 
-  test "greets the world" do
-    assert Mastery.hello() == :world
+  describe "Mastery" do
+    test "example test" do
+      # assert Mastery.hello() == :world
+    end
   end
 end
