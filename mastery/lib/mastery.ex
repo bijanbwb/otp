@@ -1,6 +1,38 @@
 defmodule Mastery do
   @moduledoc """
-  Documentation for Mastery.
+  API for building a quiz and maintaining its state with a GenServer.
+
+  _[Note: The usage below should work as advertised, but it's not intended as
+  a working doctest.]_
+
+  ## Example Usage
+
+      iex> Mastery.start_quiz_manager()
+      {:ok, #PID<0.176.0>}
+
+      iex> Mastery.build_quiz(Math.quiz_fields)
+      :ok
+
+      iex> Mastery.add_template(Math.quiz.title, Math.template_fields)
+      :ok
+
+      iex> session = Mastery.take_quiz(Math.quiz.title, "mathy@email.com")
+      #PID<0.180.0>
+
+      iex> Mastery.select_question(session)
+      "7 + 0"
+
+      iex> Mastery.answer_question(session, "wrong")
+      {"0 + 9", false}
+
+      iex> Mastery.answer_question(session, "9")
+      {"6 + 1", true}
+
+      iex> Mastery.answer_question(session, "7")
+      :finished
+
+      iex> Process.alive?(session)
+      false
   """
 
   alias Mastery.Boundary.{TemplateValidator, QuizManager, QuizSession, QuizValidator}
