@@ -10,11 +10,11 @@ defmodule Mastery do
       iex> Mastery.build_quiz(Math.quiz_fields)
       :ok
 
-      iex> Mastery.add_template(Math.quiz.title, Math.template_fields)
+      iex> Mastery.add_template(Math.quiz().title, Math.template_fields)
       :ok
 
-      iex> session = Mastery.take_quiz(Math.quiz.title, "mathy@email.com")
-      #PID<0.180.0>
+      iex> session = Mastery.take_quiz(Math.quiz().title, "mathy@email.com")
+      {:simple_addition, "mathy@email.com"}
 
       iex> Mastery.select_question(session)
       "7 + 0"
@@ -27,9 +27,6 @@ defmodule Mastery do
 
       iex> Mastery.answer_question(session, "7")
       :finished
-
-      iex> Process.alive?(session)
-      false
   """
 
   alias Mastery.Boundary.{TemplateValidator, QuizManager, QuizSession, QuizValidator}
@@ -59,7 +56,7 @@ defmodule Mastery do
   end
 
   def select_question(session) do
-    GenServer.call(session, :select_question)
+    QuizSession.select_question(session)
   end
 
   def answer_question(name, answer, persistence_fn \\ @persistence_fn) do
