@@ -1,19 +1,38 @@
 # Mastery
 
-## Installation
+OTP demo application from
+[Designing Elixir Systems](https://pragprog.com/book/jgotp/designing-elixir-systems-with-otp).
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `mastery` to your list of dependencies in `mix.exs`:
+## Project Structure
 
-```elixir
-def deps do
-  [
-    {:mastery, "~> 0.1.0"}
-  ]
-end
+Primary data structures are located in `lib/mastery/core`:
+
+- Quiz
+- Template
+- Question
+- Response
+
+## OTP
+
+See the `lib/mastery/boundary` folder for process machinery.
+
+- QuizManager
+- QuizSession (one per user) (`DynamicSupervisor`)
+
+See `lib/mastery/application.ex` for supervision settings.
+
+## Persistence
+
+Quiz responses are persistable with `mastery_persistence` using Ecto. This is
+pulled into `mix.exs` with a relative path.
+
+## Tests
+
+For persistence tests, we'll need to create and migrate the database first.
+
+```shell
+$ cd mastery_persistence
+$ MIX_ENV=test mix ecto.create
+$ MIX_ENV=test mix ecto.migrate
+$ mix test
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/mastery](https://hexdocs.pm/mastery).
-

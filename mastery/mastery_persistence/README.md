@@ -1,21 +1,5 @@
-# MasteryPersistence
+# Mastery Persistence
 
-**TODO: Add description**
+Uses Ecto for persisting quiz responses to a database.
 
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `mastery_persistence` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:mastery_persistence, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/mastery_persistence](https://hexdocs.pm/mastery_persistence).
-
+See the `README.md` file in the `mastery` folder for more info.
