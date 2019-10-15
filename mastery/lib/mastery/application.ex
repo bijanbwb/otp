@@ -9,7 +9,7 @@ defmodule Mastery.Application do
     children = [
       {Mastery.Boundary.QuizManager, [name: Mastery.Boundary.QuizManager]},
       {Registry, [name: Mastery.Registry.QuizSession, keys: :unique]},
-      {DynamicSupervisor, [name: Mastery.Supervision.QuizSession, strategy: :one_for_one]}
+      {DynamicSupervisor, [name: Mastery.Supervisor.QuizSession, strategy: :one_for_one]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
