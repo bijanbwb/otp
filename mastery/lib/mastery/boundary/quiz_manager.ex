@@ -20,6 +20,12 @@ defmodule Mastery.Boundary.QuizManager do
 
   use GenServer
 
+  # Supervision
+
+  def start_link(options \\ []) do
+    GenServer.start_link(__MODULE__, %{}, options)
+  end
+
   # API
 
   def build_quiz(manager \\ __MODULE__, quiz_fields) do
