@@ -1,0 +1,1 @@
+alias Fitbotp.Core.Exercise
