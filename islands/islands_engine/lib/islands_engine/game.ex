@@ -17,7 +17,9 @@ defmodule IslandsEngine.Game do
   """
   use GenServer
 
-  alias IslandsEngine.{Board, Guesses, Rules}
+  alias IslandsEngine.{Board, Coordinate, Guesses, Island, Rules}
+
+  @players [:player1, :player2]
 
   # API
 
