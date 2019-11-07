@@ -48,6 +48,14 @@ defmodule Servy.Handler do
     %{conn | response_body: "Program #{id}"}
   end
 
+  def route(%{method: "GET", path: "/about"} = conn) do
+    "../../pages"
+    |> Path.expand(__DIR__)
+    |> Path.join("about.html")
+    |> File.read()
+    |> handle_file(conn)
+  end
+
   def route(conn) do
     %{
       conn
@@ -66,6 +74,15 @@ defmodule Servy.Handler do
     #{conn.response_body}
     """
   end
+
+  defp handle_file({:ok, content}, conn),
+    do: %{conn | response_body: content, status: 200}
+
+  defp handle_file({:error, :enoent}, conn),
+    do: %{conn | response_body: "File not found.", status: 404}
+
+  defp handle_file({:error, reason}, conn),
+    do: %{conn | response_body: "File error: #{reason}", status: 500}
 
   defp log(conn) do
     conn_log = Enum.map_join(conn, ", ", fn {key, value} -> "#{key}: #{value}" end)
@@ -111,8 +128,14 @@ Accept: */*
 
 """
 
-response_exercises = Servy.Handler.handle(request_exercises)
-response_programs = Servy.Handler.handle(request_programs)
+request_about = """
+GET /about HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
 
-IO.puts(response_exercises)
-IO.puts(response_programs)
+"""
+
+request_exercises |> Servy.Handler.handle() |> IO.puts()
+request_programs |> Servy.Handler.handle() |> IO.puts()
+request_about |> Servy.Handler.handle() |> IO.puts()
