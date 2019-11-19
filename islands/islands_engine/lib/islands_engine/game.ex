@@ -45,11 +45,18 @@ defmodule IslandsEngine.Game do
   end
 
   defp reply_success(state_data, reply) do
+    :ets.insert(:game_state, {state_data.player1.name, state_data})
     {:reply, reply, state_data, @timeout}
   end
 
   def position_island(game, player, key, row, col) when player in @players do
     GenServer.call(game, {:position_island, player, key, row, col})
+  end
+
+  defp fresh_state(name) do
+    player1 = %{name: name, board: Board.new(), guesses: Guesses.new()}
+    player2 = %{name: nil, board: Board.new(), guesses: Guesses.new()}
+    %{player1: player1, player2: player2, rules: %Rules{}}
   end
 
   defp player_board(state_data, player) do
@@ -80,11 +87,19 @@ defmodule IslandsEngine.Game do
   # Callbacks
 
   def init(name) do
-    player1 = %{name: name, board: Board.new(), guesses: Guesses.new()}
-    player2 = %{name: nil, board: Board.new(), guesses: Guesses.new()}
-    state = %{player1: player1, player2: player2, rules: %Rules{}}
+    send(self(), {:set_state, name})
+    {:ok, fresh_state(name)}
+  end
 
-    {:ok, state, @timeout}
+  def handle_info({:set_state, name}, _state_data) do
+    state_data =
+      case :ets.lookup(:game_state, name) do
+        [] -> fresh_state(name)
+        [{_key, state}] -> state
+      end
+
+    :ets.insert(:game_state, {name, state_data})
+    {:noreply, state_data, @timeout}
   end
 
   def handle_info(:timeout, state_data) do
@@ -162,4 +177,11 @@ defmodule IslandsEngine.Game do
         {:reply, {:error, :invalid_coordinate}, state_data}
     end
   end
+
+  def terminate({:shutdown, :timeout}, state_data) do
+    :ets.delete(:game_state, state_data.player1.name)
+    :ok
+  end
+
+  def terminate(_reason, _state_data), do: :ok
 end
