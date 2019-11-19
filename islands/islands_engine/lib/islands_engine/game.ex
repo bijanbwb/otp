@@ -15,11 +15,12 @@ defmodule IslandsEngine.Game do
       iex> state_data.player2.name
       "Riley"
   """
-  use GenServer
+  use GenServer, start: {__MODULE__, :start_link, []}, restart: :transient
 
   alias IslandsEngine.{Board, Coordinate, Guesses, Island, Rules}
 
   @players [:player1, :player2]
+  @timeout 20000
 
   # API
 
@@ -44,7 +45,7 @@ defmodule IslandsEngine.Game do
   end
 
   defp reply_success(state_data, reply) do
-    {:reply, reply, state_data}
+    {:reply, reply, state_data, @timeout}
   end
 
   def position_island(game, player, key, row, col) when player in @players do
@@ -83,7 +84,11 @@ defmodule IslandsEngine.Game do
     player2 = %{name: nil, board: Board.new(), guesses: Guesses.new()}
     state = %{player1: player1, player2: player2, rules: %Rules{}}
 
-    {:ok, state}
+    {:ok, state, @timeout}
+  end
+
+  def handle_info(:timeout, state_data) do
+    {:stop, {:shutdown, :timeout}, state_data}
   end
 
   def handle_call({:add_player, name}, _from, state_data) do
