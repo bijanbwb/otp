@@ -2,8 +2,10 @@ defmodule IslandsInterfaceWeb.GameChannel do
   use IslandsInterfaceWeb, :channel
 
   alias IslandsEngine.{Game, GameSupervisor}
+  alias IslandsInterfaceWeb.Presence
 
-  def join("game:" <> _player, _payload, socket) do
+  def join("game:" <> _player, %{"screen_name" => screen_name}, socket) do
+    send(self(), {:after_join, screen_name})
     {:ok, socket}
   end
 
@@ -34,6 +36,101 @@ defmodule IslandsInterfaceWeb.GameChannel do
       :error ->
         {:reply, :error, socket}
     end
+  end
+
+  def handle_in("position_island", payload, socket) do
+    %{
+      "player" => player,
+      "island" => island,
+      "row" => row,
+      "col" => col
+    } = payload
+
+    player = String.to_existing_atom(player)
+    island = String.to_existing_atom(island)
+
+    socket.topic
+    |> via()
+    |> Game.position_island(player, island, row, col)
+    |> case do
+      :ok -> {:reply, :ok, socket}
+      _ -> {:reply, :error, socket}
+    end
+  end
+
+  def handle_in("set_islands", player, socket) do
+    player = String.to_existing_atom(player)
+
+    socket.topic
+    |> via()
+    |> Game.set_islands(player)
+    |> case do
+      {:ok, board} ->
+        broadcast!(socket, "player_set_islands", %{player: player})
+        {:reply, {:ok, %{board: board}}, socket}
+
+      _ ->
+        {:reply, :error, :socket}
+    end
+  end
+
+  def handle_in("guess_coordinate", params, socket) do
+    %{
+      "player" => player,
+      "row" => row,
+      "col" => col
+    } = params
+
+    player = String.to_existing_atom(player)
+
+    socket.topic
+    |> via()
+    |> Game.guess_coordinate(player, row, col)
+    |> case do
+      {:hit, island, win} ->
+        result = %{hit: true, island: island, win: win}
+
+        broadcast!(socket, "player_guessed_coordinate", %{
+          player: player,
+          row: row,
+          col: col,
+          result: result
+        })
+
+        {:noreply, socket}
+
+      {:miss, island, win} ->
+        result = %{hit: false, island: island, win: win}
+
+        broadcast!(socket, "player_guessed_coordinate", %{
+          player: player,
+          row: row,
+          col: col,
+          result: result
+        })
+
+        {:noreply, socket}
+
+      :error ->
+        {:reply, {:error, %{player: player, reason: "Not your turn."}}, socket}
+
+      {:error, reason} ->
+        {:reply, {:error, %{player: player, reason: reason}}, socket}
+    end
+  end
+
+  def handle_info({:after_join, screen_name}, socket) do
+    {:ok, _} =
+      Presence.track(socket, screen_name, %{
+        online_at: inspect(System.system_time(:seconds))
+      })
+
+    {:noreply, socket}
+  end
+
+  def handle_in("show_subscribers", _payload, socket) do
+    broadcast!(socket, "subscribers", Presence.list(socket))
+    {:noreply, socket}
   end
 
   defp via("game:" <> player), do: Game.via_tuple(player)
