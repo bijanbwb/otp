@@ -13,6 +13,6 @@ defmodule Workout do
 
   @spec entries(map(), Date.t()) :: [String.t()]
   def entries(workout, date) do
-    workout |> Map.get(date)
+    workout |> Map.get(date, [])
   end
 end
