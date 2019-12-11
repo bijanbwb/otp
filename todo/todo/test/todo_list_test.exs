@@ -34,7 +34,7 @@ defmodule TodoListTest do
     assert todo_list == %{entries: [todo2, todo1]}
   end
 
-  test "lists entries for a given date" do
+  test "lists task titles for a given date" do
     todo1 =
       %{date: ~D[2020-01-01], title: "Found"}
 
@@ -47,6 +47,6 @@ defmodule TodoListTest do
       |> TodoList.add_entry(todo2.date, todo2.title)
       |> TodoList.entries(~D[2020-01-01])
 
-    assert todo_list == %{entries: [todo1]}
+    assert todo_list == [todo1.title]
   end
 end

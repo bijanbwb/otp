@@ -6,6 +6,8 @@ defmodule TodoList do
   end
 
   def entries(todo_list, date) do
-    %{ todo_list | entries: todo_list.entries |> Enum.filter(fn(todo) -> todo.date == date end) }
+    todo_list.entries
+    |> Enum.filter(fn(todo) -> todo.date == date end)
+    |> Enum.map(fn(todo) -> todo.title end)
   end
 end
