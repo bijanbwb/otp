@@ -3,16 +3,18 @@ defmodule Workout do
   Create and track workouts.
   """
 
-  @spec new() :: map()
-  def new(), do: %{}
+  alias MultiDict
 
-  @spec add_entry(map(), Date.t(), String.t()) :: map()
-  def add_entry(workout, date, name) do
-    workout |> Map.update(date, [name], &[name | &1])
+  @spec new() :: map()
+  def new(), do: MultiDict.new()
+
+  @spec add_entry(map(), map()) :: map()
+  def add_entry(workout, entry) do
+    workout |> MultiDict.add(entry.date, entry)
   end
 
-  @spec entries(map(), Date.t()) :: [String.t()]
+  @spec entries(map(), Date.t()) :: [map()]
   def entries(workout, date) do
-    workout |> Map.get(date, [])
+    workout |> MultiDict.get(date)
   end
 end
