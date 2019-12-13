@@ -55,4 +55,40 @@ defmodule WorkoutTest do
 
     assert entries == expected
   end
+
+  test "updates an entry in a workout" do
+    entry1 = %{date: ~D[2020-01-01], name: "Push-ups"}
+
+    updater_function = fn entry ->
+      Map.update(entry, :name, entry.name, fn _ -> "Deadlifts" end)
+    end
+
+    workout =
+      Workout.new()
+      |> Workout.add_entry(entry1)
+      |> Workout.update_entry(1, updater_function)
+
+    entries = Workout.entries(workout, entry1.date)
+
+    expected = [%{id: 1, date: ~D[2020-01-01], name: "Deadlifts"}]
+
+    assert entries == expected
+  end
+
+  test "deletes an entry from a workout" do
+    entry1 = %{date: ~D[2020-01-01], name: "Push-ups"}
+    entry2 = %{date: ~D[2020-01-01], name: "Chin-ups"}
+
+    workout =
+      Workout.new()
+      |> Workout.add_entry(entry1)
+      |> Workout.add_entry(entry2)
+      |> Workout.delete_entry(1)
+
+    entries = Workout.entries(workout, entry1.date)
+
+    expected = [Map.put(entry2, :id, 2)]
+
+    assert entries == expected
+  end
 end
