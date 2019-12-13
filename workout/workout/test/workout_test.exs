@@ -3,9 +3,22 @@ defmodule WorkoutTest do
   doctest Workout
 
   test "creates a new workout" do
+    workout = Workout.new()
     expected = %Workout{auto_id: 1, entries: %{}}
 
-    assert Workout.new() == expected
+    assert workout == expected
+  end
+
+  test "creates a new workout with supplied entries" do
+    entries = [%{date: ~D[2020-01-01], name: "Push-ups"}]
+    workout = Workout.new(entries)
+
+    expected = %Workout{
+      auto_id: 2,
+      entries: %{1 => %{id: 1, date: ~D[2020-01-01], name: "Push-ups"}}
+    }
+
+    assert workout == expected
   end
 
   test "adds an entry to a workout" do
@@ -15,7 +28,10 @@ defmodule WorkoutTest do
       Workout.new()
       |> Workout.add_entry(entry)
 
-    expected = %Workout{auto_id: 2, entries: %{1 => Map.put(entry, :id, 1)}}
+    expected = %Workout{
+      auto_id: 2,
+      entries: %{1 => %{id: 1, date: ~D[2020-01-01], name: "Push-ups"}}
+    }
 
     assert workout == expected
   end
@@ -32,8 +48,8 @@ defmodule WorkoutTest do
     expected = %Workout{
       auto_id: 3,
       entries: %{
-        1 => Map.put(entry1, :id, 1),
-        2 => Map.put(entry2, :id, 2)
+        1 => %{id: 1, date: ~D[2020-01-01], name: "Push-ups"},
+        2 => %{id: 2, date: ~D[2020-01-01], name: "Chin-ups"}
       }
     }
 
@@ -51,7 +67,7 @@ defmodule WorkoutTest do
 
     entries = Workout.entries(workout, entry1.date)
 
-    expected = [Map.put(entry1, :id, 1)]
+    expected = [%{id: 1, date: ~D[2020-01-01], name: "Push-ups"}]
 
     assert entries == expected
   end
@@ -87,7 +103,7 @@ defmodule WorkoutTest do
 
     entries = Workout.entries(workout, entry1.date)
 
-    expected = [Map.put(entry2, :id, 2)]
+    expected = [%{id: 2, date: ~D[2020-01-01], name: "Chin-ups"}]
 
     assert entries == expected
   end

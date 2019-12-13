@@ -6,7 +6,10 @@ defmodule Workout do
   defstruct auto_id: 1, entries: %{}
 
   @spec new() :: %Workout{}
-  def new(), do: %Workout{}
+  def new(entries \\ []) do
+    entries
+    |> Enum.reduce(%Workout{}, &add_entry(&2, &1))
+  end
 
   @spec add_entry(%Workout{}, map()) :: %Workout{}
   def add_entry(workout, entry) do
@@ -42,7 +45,8 @@ defmodule Workout do
 
   @spec update_entry(%Workout{}, map()) :: %Workout{}
   def update_entry(workout, %{} = new_entry) do
-    update_entry(workout, new_entry.id, fn _ -> new_entry end)
+    workout
+    |> update_entry(new_entry.id, fn _ -> new_entry end)
   end
 
   @spec delete_entry(%Workout{}, pos_integer()) :: %Workout{}
