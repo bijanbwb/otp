@@ -5,16 +5,23 @@ defmodule Workout do
 
   alias MultiDict
 
-  @spec new() :: map()
-  def new(), do: MultiDict.new()
+  defstruct auto_id: 1, entries: %{}
 
-  @spec add_entry(map(), map()) :: map()
+  @spec new() :: %Workout{}
+  def new(), do: %Workout{}
+
+  @spec add_entry(%Workout{}, map()) :: %Workout{}
   def add_entry(workout, entry) do
-    workout |> MultiDict.add(entry.date, entry)
+    entry = Map.put(entry, :id, workout.auto_id)
+    new_entries = Map.put(workout.entries, workout.auto_id, entry)
+
+    %Workout{workout | entries: new_entries, auto_id: workout.auto_id + 1}
   end
 
-  @spec entries(map(), Date.t()) :: [map()]
+  @spec entries(%Workout{}, Date.t()) :: [map()]
   def entries(workout, date) do
-    workout |> MultiDict.get(date)
+    workout.entries
+    |> Stream.filter(fn {_, entry} -> entry.date == date end)
+    |> Enum.map(fn {_, entry} -> entry end)
   end
 end
