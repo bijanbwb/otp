@@ -1,6 +1,5 @@
 defmodule IssuesTest do
   use ExUnit.Case
-  doctest Issues
 
   alias Issues.CLI
 
@@ -26,5 +25,20 @@ defmodule IssuesTest do
   test "handles -h and --help options by returning :help" do
     assert CLI.parse_args(["-h"]) == :help
     assert CLI.parse_args(["--help"]) == :help
+  end
+
+  test "sorts by descending order" do
+    result =
+      ["c", "a", "b"]
+      |> fake_created_at_list()
+      |> CLI.sort_by_descending_order()
+
+    issues = for issue <- result, do: Map.get(issue, "created_at")
+
+    assert(issues == ["c", "b", "a"])
+  end
+
+  defp fake_created_at_list(values) do
+    for value <- values, do: %{"created_at" => value, "other_data" => "x"}
   end
 end
