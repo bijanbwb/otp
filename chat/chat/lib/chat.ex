@@ -1,6 +1,6 @@
-defmodule Todo do
+defmodule Chat do
   @moduledoc """
-  Documentation for Todo.
+  Documentation for Chat.
   """
 
   @doc """
@@ -8,7 +8,7 @@ defmodule Todo do
 
   ## Examples
 
-      iex> Todo.hello()
+      iex> Chat.hello()
       :world
 
   """

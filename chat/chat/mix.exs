@@ -1,9 +1,9 @@
-defmodule Todo.MixProject do
+defmodule Chat.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :todo,
+      app: :chat,
       version: "0.1.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
@@ -15,7 +15,7 @@ defmodule Todo.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {Todo.Application, []}
+      mod: {Chat.Application, []}
     ]
   end
 
